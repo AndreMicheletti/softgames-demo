@@ -42,6 +42,8 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
   private rightAvatar: PIXI.Sprite;
   private dialogueText: PIXI.HTMLText;
 
+  private readonly tweenGroupName = "magicWords";
+
   private data: ResponseData | null = null;
 
   private stopped = false;
@@ -90,7 +92,7 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
   }
 
   public destroy(): void {
-    TweenManager.destroyGroup("magicWords");
+    TweenManager.destroyGroup(this.tweenGroupName);
     super.destroy({ children: true });
   }
 
@@ -121,14 +123,14 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
 
     if (this.stopped) return;
     await waitForTween(
-      TweenManager.createTween(currentAvatar, "magicWords")
+      TweenManager.createTween(currentAvatar, this.tweenGroupName)
         .to({ x: GAME_HOZ_CENTER }, 500)
         .easing(Easing.Quadratic.Out),
     );
 
     this.dialogueText.text = this.convertTextToHTML(line.text);
     await waitForTween(
-      TweenManager.createTween(this.dialogueText, "magicWords")
+      TweenManager.createTween(this.dialogueText, this.tweenGroupName)
         .to({ alpha: 1.0 }, 500)
         .easing(Easing.Quadratic.InOut),
     );
@@ -137,13 +139,13 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
 
     if (this.stopped) return;
     await waitForTween(
-      TweenManager.createTween(this.dialogueText, "magicWords")
+      TweenManager.createTween(this.dialogueText, this.tweenGroupName)
         .to({ alpha: 0.0 }, 500)
         .easing(Easing.Quadratic.InOut),
     );
 
     await waitForTween(
-      TweenManager.createTween(currentAvatar, "magicWords")
+      TweenManager.createTween(currentAvatar, this.tweenGroupName)
         .to({ x: initialPosX }, 500)
         .easing(Easing.Quadratic.In),
     );

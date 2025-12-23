@@ -43,7 +43,7 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
   private cardStacks: CardStack[] = [];
   private reverse = false;
 
-  private tweenGroupName = "aceOfShadowsGroup";
+  private readonly tweenGroupName = "aceOfShadowsGroup";
 
   private fastMode = false;
 

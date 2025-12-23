@@ -5,6 +5,7 @@ import { SelectorMenu } from "./components/SelectorMenu";
 import { LoadingOverlay } from "./components/LoadingOverlay";
 import { GAME_HEIGHT, GAME_WIDTH } from "./main";
 import { MagicWordsScene } from "./scenes/MagicWords";
+import { PhoenixFlameScene } from "./scenes/PhoenixFlame";
 
 export type SceneConstructor = new () => IScene;
 
@@ -27,7 +28,7 @@ export class SceneManager {
   private scenes: Record<SceneName, SceneConstructor> = {
     [SceneName.AceOfShadows]: AceOfShadowsScene,
     [SceneName.MagicWords]: MagicWordsScene,
-    [SceneName.PhoenixFlame]: AceOfShadowsScene, // Placeholder
+    [SceneName.PhoenixFlame]: PhoenixFlameScene,
   };
 
   private constructor(container: PIXI.Container) {
