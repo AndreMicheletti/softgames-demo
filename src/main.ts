@@ -9,10 +9,12 @@ export const GAME_HEIGHT = 600;
 export const GAME_HOZ_CENTER = GAME_WIDTH / 2;
 export const GAME_VER_CENTER = GAME_HEIGHT / 2;
 
+export const APP_BACKGROUND = "#1099bb";
+
 (async () => {
   const app = new Application();
   await app.init({
-    background: "#1099bb",
+    background: APP_BACKGROUND,
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     autoDensity: true,
@@ -22,7 +24,7 @@ export const GAME_VER_CENTER = GAME_HEIGHT / 2;
   container.appendChild(app.canvas);
 
   // Initialize SceneManager with the app stage
-  const sceneManager = SceneManager.initialize(app.stage);
+  const sceneManager = SceneManager.initialize(app);
   const loadingPromise = sceneManager.load();
 
   // Start the PIXI application ticker

@@ -10,7 +10,6 @@ export class LoadingOverlay extends PIXI.Container {
     super();
     this.background = new PIXI.Graphics();
     this.loadingText = new PIXI.Text();
-    this.zIndex = 999;
     this.initialize(width, height);
   }
 

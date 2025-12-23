@@ -20,6 +20,7 @@ export class SceneManager {
 
   private currentScene: IScene | null = null;
   private currentSceneName: string | null = null;
+  private app: PIXI.Application;
   private container: PIXI.Container;
 
   private selectorMenu: SelectorMenu | null = null;
@@ -31,16 +32,21 @@ export class SceneManager {
     [SceneName.PhoenixFlame]: PhoenixFlameScene,
   };
 
-  private constructor(container: PIXI.Container) {
-    this.container = container;
+  private constructor(app: PIXI.Application) {
+    this.app = app;
+    this.container = app.stage;
+  }
+
+  public get pixiApp(): PIXI.Application {
+    return this.app;
   }
 
   /**
    * Initialize the SceneManager singleton instance
    */
-  public static initialize(container: PIXI.Container): SceneManager {
+  public static initialize(app: PIXI.Application): SceneManager {
     if (!SceneManager._instance) {
-      SceneManager._instance = new SceneManager(container);
+      SceneManager._instance = new SceneManager(app);
     }
     return SceneManager._instance;
   }
@@ -131,6 +137,7 @@ export class SceneManager {
 
   public async load(): Promise<void> {
     this.loadingOverlay = new LoadingOverlay(GAME_WIDTH, GAME_HEIGHT);
+    this.loadingOverlay.zIndex = 999;
     this.container.addChild(this.loadingOverlay);
 
     await this.loadingOverlay.show();
@@ -138,6 +145,7 @@ export class SceneManager {
     await this.loadingOverlay.hide();
 
     this.selectorMenu = new SelectorMenu();
+    this.selectorMenu.zIndex = 900;
     this.container.addChild(this.selectorMenu);
   }
 }

@@ -65,6 +65,11 @@ export default (_env, argv) => {
     },
     resolve: {
       extensions: [".tsx", ".ts", ".js"],
+      resolve: {
+        alias: {
+          'pixi.js': path.resolve(__dirname, 'node_modules/pixi.js')
+        }
+      }
     },
 
     plugins: [
