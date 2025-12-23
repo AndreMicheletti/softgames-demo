@@ -10,13 +10,14 @@ export class LoadingOverlay extends PIXI.Container {
     super();
     this.background = new PIXI.Graphics();
     this.loadingText = new PIXI.Text();
+    this.zIndex = 999;
     this.initialize(width, height);
   }
 
   private initialize(width: number, height: number): void {
     // Create semi-transparent black background
     this.background.rect(0, 0, width, height);
-    this.background.fill({ color: 0x000000, alpha: 0.5 });
+    this.background.fill({ color: 0x000000, alpha: 0.7 });
     this.addChild(this.background);
 
     // Create "Loading" text
@@ -40,11 +41,11 @@ export class LoadingOverlay extends PIXI.Container {
 
   public async show(): Promise<void> {
     this.visible = true;
-    await waitForTween(TweenManager.createTween(this).to({ alpha: 1.0 }, 1000));
+    await waitForTween(TweenManager.createTween(this).to({ alpha: 1.0 }, 300));
   }
 
   public async hide(): Promise<void> {
-    await waitForTween(TweenManager.createTween(this).to({ alpha: 0.0 }, 1000));
+    await waitForTween(TweenManager.createTween(this).to({ alpha: 0.0 }, 300));
     this.visible = false;
   }
 

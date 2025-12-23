@@ -3,13 +3,14 @@ import { AceOfShadowsScene } from "./scenes/AceOfShadowsScene";
 import { IScene } from "./scenes/IScene";
 import { SelectorMenu } from "./components/SelectorMenu";
 import { LoadingOverlay } from "./components/LoadingOverlay";
-import { waitForSeconds } from "./utils";
 import { GAME_HEIGHT, GAME_WIDTH } from "./main";
 
 export type SceneConstructor = new () => IScene;
 
 export enum SceneName {
   AceOfShadows = "AceOfShadows",
+  MagicWords = "MagicWords",
+  PhoenixFlame = "PhoenixFlame",
 }
 
 export class SceneManager {
@@ -24,11 +25,12 @@ export class SceneManager {
 
   private scenes: Record<SceneName, SceneConstructor> = {
     [SceneName.AceOfShadows]: AceOfShadowsScene,
+    [SceneName.MagicWords]: AceOfShadowsScene, // Placeholder
+    [SceneName.PhoenixFlame]: AceOfShadowsScene, // Placeholder
   };
 
   private constructor(container: PIXI.Container) {
     this.container = container;
-    this.createElements();
   }
 
   /**
@@ -65,15 +67,14 @@ export class SceneManager {
     }
 
     const newScene = new SceneClass();
-    newScene.initialize();
 
     await this.loadingOverlay?.show();
-    await waitForSeconds(2);
     await newScene.load();
     await this.loadingOverlay?.hide();
 
     // Destroy current scene if exists
     if (this.currentScene) {
+      await this.currentScene.onExit();
       this.destroyCurrentScene();
     }
 
@@ -81,6 +82,8 @@ export class SceneManager {
     this.currentScene = new SceneClass();
     this.currentSceneName = sceneName;
     this.container.addChild(this.currentScene);
+
+    await this.currentScene.onEnter();
 
     return true;
   }
@@ -124,11 +127,15 @@ export class SceneManager {
     }
   }
 
-  private createElements(): void {
-    this.selectorMenu = new SelectorMenu();
-    this.container.addChild(this.selectorMenu);
-
+  public async load(): Promise<void> {
     this.loadingOverlay = new LoadingOverlay(GAME_WIDTH, GAME_HEIGHT);
     this.container.addChild(this.loadingOverlay);
+
+    await this.loadingOverlay.show();
+    await PIXI.Assets.load("assets/game_sheet.json");
+    await this.loadingOverlay.hide();
+
+    this.selectorMenu = new SelectorMenu();
+    this.container.addChild(this.selectorMenu);
   }
 }

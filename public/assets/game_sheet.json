@@ -473,10 +473,10 @@
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.1",
-	"image": "cards_sheet.png",
+	"image": "game_sheet.png",
 	"format": "RGBA8888",
 	"size": {"w":512,"h":512},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e88b7c5351e0d2d48eb045461f146b1b:62556ec242fb8315e060c142e3ed5a9e:364adbd9c285985515b197bbbb58764c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b7b4b67973f0a51a4553c200404ba1b2:62556ec242fb8315e060c142e3ed5a9e:cee9091cd8ff292732280c3db06d9d51$"
 }
 }

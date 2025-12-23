@@ -1,22 +1,22 @@
-import { Container, Text, Graphics } from "pixi.js";
+import { Container, Text, NineSlicePlane, Texture } from "pixi.js";
 
 interface ButtonOptions {
   label: string;
   width?: number;
   height?: number;
-  backgroundColor?: number;
   textColor?: number;
-  hoverColor?: number;
   onClick?: () => void;
+  margin?: number;
 }
 
 export class Button extends Container {
-  private background: Graphics;
+  private background: NineSlicePlane | null = null;
   private contentLabel: Text;
   private isHovered = false;
-  private backgroundColor: number;
-  private hoverColor: number;
+  private textColor: number;
   private onClick?: () => void;
+  private buttonWidth: number;
+  private buttonHeight: number;
 
   constructor(options: ButtonOptions) {
     super();
@@ -25,35 +25,32 @@ export class Button extends Container {
       label,
       width = 120,
       height = 40,
-      backgroundColor = 0x4a90e2,
       textColor = 0xffffff,
-      hoverColor = 0x357abd,
       onClick,
+      margin = 10,
     } = options;
 
-    this.backgroundColor = backgroundColor;
-    this.hoverColor = hoverColor;
+    this.buttonWidth = width;
+    this.buttonHeight = height;
+    this.textColor = textColor;
     this.onClick = onClick;
 
-    // Create background rectangle
-    this.background = new Graphics();
-    this.background.fillStyle.color = backgroundColor;
-    this.background.rect(0, 0, width, height);
-    this.background.fill();
-    this.addChild(this.background);
+    this.initializeButton(width, height, margin);
 
     // Create text label
-    this.contentLabel = new Text({
-      text: label,
-      style: {
-        fontFamily: "Arial",
-        fontSize: 16,
-        fill: textColor,
-        align: "center",
+    this.contentLabel = new Text(label, {
+      fontFamily: "Arial",
+      fontSize: 22,
+      fill: this.textColor,
+      align: "center",
+      stroke: {
+        color: "#000000",
+        width: 4,
+        alpha: 0.3,
       },
     });
     this.contentLabel.anchor.set(0.5);
-    this.contentLabel.position.set(width / 2, height / 2);
+    this.contentLabel.position.set(this.buttonWidth / 2, this.buttonHeight / 2);
     this.addChild(this.contentLabel);
 
     // Enable interactivity
@@ -66,23 +63,50 @@ export class Button extends Container {
     this.on("pointertap", () => this.onButtonClick());
   }
 
+  private async initializeButton(
+    width: number,
+    height: number,
+    margin: number,
+  ): Promise<void> {
+    try {
+      // Get the texture from the loaded sprite sheet
+      const texture = Texture.from("button_square_depth_gloss.png");
+
+      // Create a 9-slice plane with the specified margins
+      this.background = new NineSlicePlane(
+        texture,
+        margin,
+        margin,
+        margin,
+        margin,
+      );
+      this.background.width = width;
+      this.background.height = height;
+
+      // Add background to the beginning so text appears on top
+      this.addChildAt(this.background, 0);
+    } catch (error) {
+      console.error("Failed to load button texture:", error);
+    }
+  }
+
   private onHover(): void {
     if (!this.isHovered) {
       this.isHovered = true;
-      this.background.clear();
-      this.background.fillStyle.color = this.hoverColor;
-      this.background.rect(0, 0, this.background.width, this.background.height);
-      this.background.fill();
+      // Apply a slight tint or scale on hover
+      if (this.background) {
+        this.background.tint = 0xcccccc;
+      }
     }
   }
 
   private onHoverLeave(): void {
     if (this.isHovered) {
       this.isHovered = false;
-      this.background.clear();
-      this.background.fillStyle.color = this.backgroundColor;
-      this.background.rect(0, 0, this.background.width, this.background.height);
-      this.background.fill();
+      // Reset to normal
+      if (this.background) {
+        this.background.tint = 0xffffff;
+      }
     }
   }
 
@@ -90,5 +114,18 @@ export class Button extends Container {
     if (this.onClick) {
       this.onClick();
     }
+  }
+
+  /**
+   * Resize the button
+   */
+  public resize(width: number, height: number): void {
+    if (this.background) {
+      this.background.width = width;
+      this.background.height = height;
+    }
+    this.buttonWidth = width;
+    this.buttonHeight = height;
+    this.contentLabel.position.set(width / 2, height / 2);
   }
 }
