@@ -1,4 +1,4 @@
-import { Application, Ticker } from "pixi.js";
+import { Application, Ticker, Text } from "pixi.js";
 import { SceneManager } from "./SceneManager";
 import TweenManager from "./TweenManager";
 
@@ -23,6 +23,21 @@ export const APP_BACKGROUND = "#1099bb";
   const container = document.getElementById("pixi-container")!;
   container.appendChild(app.canvas);
 
+  // Create FPS display
+  const fpsText = new Text({
+    text: "FPS: 0",
+    style: {
+      fontFamily: "Arial",
+      fontSize: 16,
+      fill: 0xffffff,
+      align: "right",
+    },
+  });
+  fpsText.anchor.set(1, 0);
+  fpsText.position.set(GAME_WIDTH - 10, 10);
+  fpsText.zIndex = 1000;
+  app.stage.addChild(fpsText);
+
   // Initialize SceneManager with the app stage
   const sceneManager = SceneManager.initialize(app);
   const loadingPromise = sceneManager.load();
@@ -31,6 +46,10 @@ export const APP_BACKGROUND = "#1099bb";
   app.ticker.add((ticker: Ticker) => {
     sceneManager.update(ticker.deltaMS);
     TweenManager.update();
+
+    // Update FPS display
+    const fps = Math.round(ticker.FPS);
+    fpsText.text = `FPS: ${fps}`;
   });
 
   await loadingPromise;
