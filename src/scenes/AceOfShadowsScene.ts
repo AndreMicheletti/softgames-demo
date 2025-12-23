@@ -80,7 +80,7 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
     this.cards.forEach((card) => card.destroy());
     this.cardStacks.forEach((stack) => stack.destroy());
     this.titleLabel?.destroy();
-    super.destroy();
+    super.destroy({ children: true });
   }
 
   public async onEnter(): Promise<void> {
