@@ -18,6 +18,8 @@ export class Button extends Container {
   private buttonWidth: number;
   private buttonHeight: number;
 
+  private _disabled = false;
+
   constructor(options: ButtonOptions) {
     super();
 
@@ -63,6 +65,17 @@ export class Button extends Container {
     this.on("pointertap", () => this.onButtonClick());
   }
 
+  public get disabled(): boolean {
+    return this._disabled;
+  }
+
+  public set disabled(value: boolean) {
+    this._disabled = value;
+    this.tint = value ? 0xdddddd : 0xffffff;
+    this.eventMode = value ? "none" : "static";
+    this.cursor = value ? "default" : "pointer";
+  }
+
   private async initializeButton(
     width: number,
     height: number,
@@ -91,7 +104,7 @@ export class Button extends Container {
   }
 
   private onHover(): void {
-    if (!this.isHovered) {
+    if (!this.isHovered && !this._disabled) {
       this.isHovered = true;
       // Apply a slight tint or scale on hover
       if (this.background) {
@@ -103,15 +116,15 @@ export class Button extends Container {
   private onHoverLeave(): void {
     if (this.isHovered) {
       this.isHovered = false;
-      // Reset to normal
+      // Reset to normal or disabled color
       if (this.background) {
-        this.background.tint = 0xffffff;
+        this.background.tint = this._disabled ? 0xdddddd : 0xffffff;
       }
     }
   }
 
   private onButtonClick(): void {
-    if (this.onClick) {
+    if (!this._disabled && this.onClick) {
       this.onClick();
     }
   }
@@ -127,5 +140,36 @@ export class Button extends Container {
     this.buttonWidth = width;
     this.buttonHeight = height;
     this.contentLabel.position.set(width / 2, height / 2);
+  }
+
+  /**
+   * Disable the button
+   */
+  public disable(): void {
+    this._disabled = true;
+    if (this.background) {
+      this.background.tint = 0xdddddd;
+    }
+    this.eventMode = "none";
+    this.cursor = "default";
+  }
+
+  /**
+   * Enable the button
+   */
+  public enable(): void {
+    this._disabled = false;
+    if (this.background) {
+      this.background.tint = 0xffffff;
+    }
+    this.eventMode = "static";
+    this.cursor = "pointer";
+  }
+
+  /**
+   * Check if button is disabled
+   */
+  public getDisabled(): boolean {
+    return this._disabled;
   }
 }

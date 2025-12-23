@@ -9,7 +9,7 @@ export class SelectorMenu extends Container {
   }
 
   private initialize(): void {
-    this.position.set(10, 10);
+    this.position.set(10, SceneManager.instance.gameVerCenter - 75);
 
     const buttons = [
       { label: "Ace of Shadows", scene: SceneName.AceOfShadows },

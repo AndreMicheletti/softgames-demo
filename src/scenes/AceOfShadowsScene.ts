@@ -1,11 +1,11 @@
 import * as PIXI from "pixi.js";
 import { IScene } from "./IScene";
-import { GAME_HOZ_CENTER, GAME_VER_CENTER, GAME_WIDTH } from "../main";
 import CardStack from "../components/CardStack";
 import { waitForTween } from "../utils";
 import TweenManager from "../TweenManager";
 import { Easing } from "@tweenjs/tween.js";
 import { Button } from "../components/Button";
+import { SceneManager } from "../SceneManager";
 
 const SUITS = ["hearts", "diamonds", "clubs", "spades"];
 const RANKS = [
@@ -36,8 +36,14 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
   private cards: PIXI.Sprite[] = [];
 
   private stackPositions: PIXI.Point[] = [
-    new PIXI.Point(GAME_HOZ_CENTER - 100, GAME_VER_CENTER - 150),
-    new PIXI.Point(GAME_HOZ_CENTER + 100, GAME_VER_CENTER - 150),
+    new PIXI.Point(
+      SceneManager.instance.gameHozCenter - 100,
+      SceneManager.instance.gameVerCenter - 150,
+    ),
+    new PIXI.Point(
+      SceneManager.instance.gameHozCenter + 100,
+      SceneManager.instance.gameVerCenter - 150,
+    ),
   ];
 
   private cardStacks: CardStack[] = [];
@@ -54,7 +60,7 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
     this.addChild(this.titleLabel);
 
     this.fastButton = this.createFastButton();
-    this.fastButton.position.set(GAME_WIDTH - 160, 20);
+    this.fastButton.position.set(SceneManager.instance.gameWidth - 160, 20);
     this.addChild(this.fastButton);
 
     this.cardStacks.push(new CardStack(this.stackPositions[0], CARD_OFFSET));
@@ -119,7 +125,7 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
       },
     });
     titleLabel.anchor.set(0.5, 0);
-    titleLabel.position.set(GAME_WIDTH / 2, 20);
+    titleLabel.position.set(SceneManager.instance.gameHozCenter, 20);
     return titleLabel;
   }
 
@@ -130,6 +136,7 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
       height: 40,
       onClick: () => {
         this.fastMode = true;
+        this.fastButton.disabled = true;
       },
     });
   }

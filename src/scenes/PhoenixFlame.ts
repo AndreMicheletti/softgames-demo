@@ -1,14 +1,9 @@
 import * as PIXI from "pixi.js";
 import { FX, ParticleEmitter } from "revolt-fx";
 import TweenManager from "../TweenManager";
-import {
-  GAME_HEIGHT,
-  GAME_HOZ_CENTER,
-  GAME_VER_CENTER,
-  GAME_WIDTH,
-} from "../main";
 import { IScene } from "./IScene";
 import { waitForTween } from "../utils";
+import { SceneManager } from "../SceneManager";
 
 export class PhoenixFlameScene extends PIXI.Container implements IScene {
   private titleLabel: PIXI.Text;
@@ -24,7 +19,12 @@ export class PhoenixFlameScene extends PIXI.Container implements IScene {
     super();
 
     this.blackBg = new PIXI.Graphics();
-    this.blackBg.rect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    this.blackBg.rect(
+      0,
+      0,
+      SceneManager.instance.gameWidth,
+      SceneManager.instance.gameHeight,
+    );
     this.blackBg.fill("#000000");
     this.blackBg.alpha = 0.0;
     this.addChild(this.blackBg);
@@ -34,7 +34,10 @@ export class PhoenixFlameScene extends PIXI.Container implements IScene {
 
     this.target = new PIXI.Container();
     this.addChild(this.target);
-    this.target.position.set(GAME_HOZ_CENTER, GAME_VER_CENTER);
+    this.target.position.set(
+      SceneManager.instance.gameHozCenter,
+      SceneManager.instance.gameVerCenter,
+    );
 
     this.revoltFX = new FX();
   }
@@ -77,8 +80,8 @@ export class PhoenixFlameScene extends PIXI.Container implements IScene {
       .to({ alpha: 1.0 }, 500)
       .start();
     this.greatFireEmiiter = this.revoltFX.getParticleEmitter("great-fire");
-    this.greatFireEmiiter.x = GAME_VER_CENTER;
-    this.greatFireEmiiter.y = GAME_HOZ_CENTER;
+    this.greatFireEmiiter.x = SceneManager.instance.gameVerCenter;
+    this.greatFireEmiiter.y = SceneManager.instance.gameHozCenter;
     this.greatFireEmiiter.init(this, true, 1);
     this.greatFireEmiiter.target = this.target;
   }
@@ -104,7 +107,7 @@ export class PhoenixFlameScene extends PIXI.Container implements IScene {
       },
     });
     titleLabel.anchor.set(0.5, 0);
-    titleLabel.position.set(GAME_WIDTH / 2, 20);
+    titleLabel.position.set(SceneManager.instance.gameHozCenter, 20);
     return titleLabel;
   }
 }

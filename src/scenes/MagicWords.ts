@@ -1,15 +1,10 @@
 import { Easing } from "@tweenjs/tween.js";
 import * as PIXI from "pixi.js";
 import CustomLoader from "../loader";
-import {
-  GAME_HEIGHT,
-  GAME_HOZ_CENTER,
-  GAME_VER_CENTER,
-  GAME_WIDTH,
-} from "../main";
 import TweenManager from "../TweenManager";
 import { waitForSeconds, waitForTween } from "../utils";
 import { IScene } from "./IScene";
+import { SceneManager } from "../SceneManager";
 
 type DialogueLine = {
   name: string;
@@ -56,12 +51,15 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
 
     this.leftAvatar = new PIXI.Sprite();
     this.leftAvatar.anchor.set(0.5);
-    this.leftAvatar.position.set(-100, GAME_HEIGHT - 100);
+    this.leftAvatar.position.set(-100, SceneManager.instance.gameHeight - 100);
     this.addChild(this.leftAvatar);
 
     this.rightAvatar = new PIXI.Sprite();
     this.rightAvatar.anchor.set(0.5);
-    this.rightAvatar.position.set(GAME_WIDTH + 100, GAME_HEIGHT - 100);
+    this.rightAvatar.position.set(
+      SceneManager.instance.gameWidth + 100,
+      SceneManager.instance.gameHeight - 100,
+    );
     this.addChild(this.rightAvatar);
 
     this.dialogueText = new PIXI.HTMLText({
@@ -71,11 +69,14 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
         fontSize: 24,
         fill: 0xffffff,
         wordWrap: true,
-        wordWrapWidth: GAME_WIDTH - 150,
+        wordWrapWidth: SceneManager.instance.gameWidth / 3,
       },
     });
     this.dialogueText.anchor.set(0.5);
-    this.dialogueText.position.set(GAME_HOZ_CENTER, GAME_VER_CENTER - 50);
+    this.dialogueText.position.set(
+      SceneManager.instance.gameHozCenter,
+      SceneManager.instance.gameVerCenter - 50,
+    );
     this.dialogueText.alpha = 0.0;
 
     this.addChild(this.dialogueText);
@@ -124,7 +125,7 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
     if (this.stopped) return;
     await waitForTween(
       TweenManager.createTween(currentAvatar, this.tweenGroupName)
-        .to({ x: GAME_HOZ_CENTER }, 500)
+        .to({ x: SceneManager.instance.gameHozCenter }, 500)
         .easing(Easing.Quadratic.Out),
     );
 
@@ -187,7 +188,7 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
       },
     });
     titleLabel.anchor.set(0.5, 0);
-    titleLabel.position.set(GAME_WIDTH / 2, 20);
+    titleLabel.position.set(SceneManager.instance.gameHozCenter, 20);
     return titleLabel;
   }
 

@@ -3,7 +3,6 @@ import { AceOfShadowsScene } from "./scenes/AceOfShadowsScene";
 import { IScene } from "./scenes/IScene";
 import { SelectorMenu } from "./components/SelectorMenu";
 import { LoadingOverlay } from "./components/LoadingOverlay";
-import { GAME_HEIGHT, GAME_WIDTH } from "./main";
 import { MagicWordsScene } from "./scenes/MagicWords";
 import { PhoenixFlameScene } from "./scenes/PhoenixFlame";
 
@@ -39,6 +38,22 @@ export class SceneManager {
 
   public get pixiApp(): PIXI.Application {
     return this.app;
+  }
+
+  public get gameWidth(): number {
+    return this.app.renderer.width;
+  }
+
+  public get gameHeight(): number {
+    return this.app.renderer.height;
+  }
+
+  public get gameHozCenter(): number {
+    return this.gameWidth / 2;
+  }
+
+  public get gameVerCenter(): number {
+    return this.gameHeight / 2;
   }
 
   /**
@@ -136,7 +151,7 @@ export class SceneManager {
   }
 
   public async load(): Promise<void> {
-    this.loadingOverlay = new LoadingOverlay(GAME_WIDTH, GAME_HEIGHT);
+    this.loadingOverlay = new LoadingOverlay(this.gameWidth, this.gameHeight);
     this.loadingOverlay.zIndex = 999;
     this.container.addChild(this.loadingOverlay);
 

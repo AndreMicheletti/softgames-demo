@@ -3,22 +3,36 @@ import { SceneManager } from "./SceneManager";
 import TweenManager from "./TweenManager";
 
 // Fixed game resolution
-export const GAME_WIDTH = 800;
-export const GAME_HEIGHT = 600;
-
-export const GAME_HOZ_CENTER = GAME_WIDTH / 2;
-export const GAME_VER_CENTER = GAME_HEIGHT / 2;
+const GAME_WIDTH = 800;
+const GAME_HEIGHT = 600;
 
 export const APP_BACKGROUND = "#1099bb";
 
+function requestFullscreen(canvas: HTMLCanvasElement): Promise<void> {
+  return new Promise<void>((resolve) => {
+    const overlay = document.getElementById("fullscreen-overlay")!;
+
+    overlay.onclick = () => {
+      overlay.remove();
+      canvas.requestFullscreen();
+      resolve();
+    };
+  });
+}
+
 (async () => {
   const app = new Application();
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  console.log("isMobile:", isMobile);
   await app.init({
     background: APP_BACKGROUND,
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
+    width: isMobile ? GAME_HEIGHT : GAME_WIDTH,
+    height: isMobile ? GAME_WIDTH : GAME_HEIGHT,
     autoDensity: true,
   });
+  if (isMobile) {
+    app.renderer.resolution = window.devicePixelRatio || 1;
+  }
 
   const container = document.getElementById("pixi-container")!;
   container.appendChild(app.canvas);
@@ -37,6 +51,8 @@ export const APP_BACKGROUND = "#1099bb";
   fpsText.position.set(GAME_WIDTH - 10, 10);
   fpsText.zIndex = 1000;
   app.stage.addChild(fpsText);
+
+  await requestFullscreen(app.canvas);
 
   // Initialize SceneManager with the app stage
   const sceneManager = SceneManager.initialize(app);
