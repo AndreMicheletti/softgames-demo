@@ -1,25 +1,34 @@
 import * as PIXI from "pixi.js";
-import { MainScene } from "./MainScene";
+import { AceOfShadowsScene } from "./scenes/AceOfShadowsScene";
+import { IScene } from "./scenes/IScene";
+import { SelectorMenu } from "./components/SelectorMenu";
+import { LoadingOverlay } from "./components/LoadingOverlay";
+import { waitForSeconds } from "./utils";
+import { GAME_HEIGHT, GAME_WIDTH } from "./main";
 
-export type SceneConstructor = new () => PIXI.Container;
+export type SceneConstructor = new () => IScene;
 
 export enum SceneName {
-  Main = "Main",
+  AceOfShadows = "AceOfShadows",
 }
 
 export class SceneManager {
   private static _instance: SceneManager | null = null;
 
-  private currentScene: PIXI.Container | null = null;
+  private currentScene: IScene | null = null;
   private currentSceneName: string | null = null;
   private container: PIXI.Container;
 
+  private selectorMenu: SelectorMenu | null = null;
+  private loadingOverlay: LoadingOverlay | null = null;
+
   private scenes: Record<SceneName, SceneConstructor> = {
-    [SceneName.Main]: MainScene,
+    [SceneName.AceOfShadows]: AceOfShadowsScene,
   };
 
   private constructor(container: PIXI.Container) {
     this.container = container;
+    this.createElements();
   }
 
   /**
@@ -47,13 +56,21 @@ export class SceneManager {
   /**
    * Load and display a scene by name
    */
-  public loadScene(sceneName: SceneName): boolean {
+  public async loadScene(sceneName: SceneName): Promise<boolean> {
     const SceneClass = this.scenes[sceneName];
 
     if (!SceneClass) {
       console.warn(`Scene "${sceneName}" not found`);
       return false;
     }
+
+    const newScene = new SceneClass();
+    newScene.initialize();
+
+    await this.loadingOverlay?.show();
+    await waitForSeconds(2);
+    await newScene.load();
+    await this.loadingOverlay?.hide();
 
     // Destroy current scene if exists
     if (this.currentScene) {
@@ -69,21 +86,10 @@ export class SceneManager {
   }
 
   /**
-   * Change to a different scene
+   * Update the current scene
    */
-  public changeScene(sceneName: SceneName): boolean {
-    return this.loadScene(sceneName);
-  }
-
-  /**
-   * Destroy the current scene
-   */
-  private destroyCurrentScene(): void {
-    if (this.currentScene) {
-      this.currentScene.destroy();
-      this.currentScene = null;
-      this.currentSceneName = null;
-    }
+  public update(deltaTime: number): void {
+    this.currentScene?.update(deltaTime);
   }
 
   /**
@@ -105,5 +111,24 @@ export class SceneManager {
    */
   public destroy(): void {
     this.destroyCurrentScene();
+  }
+
+  /**
+   * Destroy the current scene
+   */
+  private destroyCurrentScene(): void {
+    if (this.currentScene) {
+      this.currentScene.destroy();
+      this.currentScene = null;
+      this.currentSceneName = null;
+    }
+  }
+
+  private createElements(): void {
+    this.selectorMenu = new SelectorMenu();
+    this.container.addChild(this.selectorMenu);
+
+    this.loadingOverlay = new LoadingOverlay(GAME_WIDTH, GAME_HEIGHT);
+    this.container.addChild(this.loadingOverlay);
   }
 }

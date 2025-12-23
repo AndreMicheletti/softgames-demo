@@ -1,9 +1,10 @@
-import { Application } from "pixi.js";
-import { SceneManager, SceneName } from "./scenes/SceneManager";
+import { Application, Ticker } from "pixi.js";
+import { SceneManager, SceneName } from "./SceneManager";
+import TweenManager from "./TweenManager";
 
 // Fixed game resolution
-const GAME_WIDTH = 800;
-const GAME_HEIGHT = 600;
+export const GAME_WIDTH = 800;
+export const GAME_HEIGHT = 600;
 
 (async () => {
   const app = new Application();
@@ -17,11 +18,17 @@ const GAME_HEIGHT = 600;
   const container = document.getElementById("pixi-container")!;
   container.appendChild(app.canvas);
 
+  // Start the PIXI application ticker
+  app.ticker.add((ticker: Ticker) => {
+    sceneManager.update(ticker.deltaMS);
+    TweenManager.defaultGroup.update(ticker.deltaMS);
+  });
+
   // Initialize SceneManager with the app stage
   const sceneManager = SceneManager.initialize(app.stage);
 
   // Load the initial scene
-  sceneManager.loadScene(SceneName.Main);
+  sceneManager.loadScene(SceneName.AceOfShadows);
 
   // Handle window resize to scale the canvas while maintaining aspect ratio
   const handleResize = () => {
@@ -38,9 +45,7 @@ const GAME_HEIGHT = 600;
     app.canvas.style.transformOrigin = "top center";
   };
 
-  // Initial resize
-  handleResize();
-
   // Listen for window resize events
+  handleResize();
   window.addEventListener("resize", handleResize);
 })();

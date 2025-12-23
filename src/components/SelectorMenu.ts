@@ -1,17 +1,14 @@
-import * as PIXI from "pixi.js";
-import { Button } from "../components/Button";
+import { Container } from "pixi.js";
+import { Button } from "./Button";
 
-export class MainScene extends PIXI.Container {
+export class SelectorMenu extends Container {
   constructor() {
     super();
     this.initialize();
   }
 
   private initialize(): void {
-    // Add scene initialization code here
-    // Create in-game menu in top left corner
-    const menu = new PIXI.Container();
-    menu.position.set(10, 10);
+    this.position.set(10, 10);
 
     const buttons = [
       { label: "Ace of Shadows", color: 0x2c3e50 },
@@ -31,18 +28,7 @@ export class MainScene extends PIXI.Container {
         },
       });
       button.position.y = index * 50;
-      menu.addChild(button);
+      this.addChild(button);
     });
-
-    this.addChild(menu);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(_deltaTime: number): void {
-    // Add update logic here
-  }
-
-  public destroy(): void {
-    super.destroy();
   }
 }
