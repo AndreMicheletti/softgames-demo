@@ -1,8 +1,11 @@
 import path from "path";
+import { fileURLToPath } from "url";
 
 import CopyPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import TerserPlugin from "terser-webpack-plugin";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default (_env, argv) => {
   return {
@@ -65,10 +68,8 @@ export default (_env, argv) => {
     },
     resolve: {
       extensions: [".tsx", ".ts", ".js"],
-      resolve: {
-        alias: {
-          'pixi.js': path.resolve(__dirname, 'node_modules/pixi.js')
-        }
+      alias: {
+        'pixi.js': path.resolve(__dirname, 'node_modules/pixi.js')
       }
     },
 
