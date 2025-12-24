@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { IScene } from "./IScene";
 import CardStack from "../components/CardStack";
-import { waitForTween } from "../utils";
+import { isMobile, waitForTween } from "../utils";
 import TweenManager from "../TweenManager";
 import { Easing } from "@tweenjs/tween.js";
 import { Button } from "../components/Button";
@@ -62,6 +62,11 @@ export class AceOfShadowsScene extends PIXI.Container implements IScene {
     this.fastButton = this.createFastButton();
     this.fastButton.position.set(SceneManager.instance.gameWidth - 160, 20);
     this.addChild(this.fastButton);
+
+    if (isMobile()) {
+      this.stackPositions[0].x += 100;
+      this.stackPositions[1].x += 100;
+    }
 
     this.cardStacks.push(new CardStack(this.stackPositions[0], CARD_OFFSET));
     this.cardStacks.push(new CardStack(this.stackPositions[1], CARD_OFFSET));

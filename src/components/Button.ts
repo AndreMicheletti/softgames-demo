@@ -55,6 +55,8 @@ export class Button extends Container {
     this.contentLabel.position.set(this.buttonWidth / 2, this.buttonHeight / 2);
     this.addChild(this.contentLabel);
 
+    this.zIndex = 50;
+
     // Enable interactivity
     this.eventMode = "static";
     this.cursor = "pointer";

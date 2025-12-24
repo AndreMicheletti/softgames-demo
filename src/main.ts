@@ -1,6 +1,7 @@
 import { Application, Ticker, Text } from "pixi.js";
 import { SceneManager } from "./SceneManager";
 import TweenManager from "./TweenManager";
+import { isMobile } from "./utils";
 
 // Fixed game resolution
 const GAME_WIDTH = 800;
@@ -22,17 +23,13 @@ function requestFullscreen(canvas: HTMLCanvasElement): Promise<void> {
 
 (async () => {
   const app = new Application();
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-  console.log("isMobile:", isMobile);
+  const isMobileDevice = isMobile();
   await app.init({
     background: APP_BACKGROUND,
-    width: isMobile ? GAME_HEIGHT : GAME_WIDTH,
-    height: isMobile ? GAME_WIDTH : GAME_HEIGHT,
+    width: isMobileDevice ? GAME_HEIGHT : GAME_WIDTH,
+    height: isMobileDevice ? GAME_WIDTH : GAME_HEIGHT,
     autoDensity: true,
   });
-  if (isMobile) {
-    app.renderer.resolution = window.devicePixelRatio || 1;
-  }
 
   const container = document.getElementById("pixi-container")!;
   container.appendChild(app.canvas);

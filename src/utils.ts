@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js";
 import { Tween } from "@tweenjs/tween.js";
 
 export function waitForSeconds(seconds: number): Promise<void> {
@@ -13,4 +14,8 @@ export function waitForTween(tween: Tween, start = true): Promise<void> {
       tween.start();
     }
   });
+}
+
+export function isMobile(): boolean {
+  return /Mobi|Android/i.test(navigator.userAgent) || PIXI.isMobile.any;
 }

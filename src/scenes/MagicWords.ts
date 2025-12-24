@@ -2,7 +2,7 @@ import { Easing } from "@tweenjs/tween.js";
 import * as PIXI from "pixi.js";
 import CustomLoader from "../loader";
 import TweenManager from "../TweenManager";
-import { waitForSeconds, waitForTween } from "../utils";
+import { isMobile, waitForSeconds, waitForTween } from "../utils";
 import { IScene } from "./IScene";
 import { SceneManager } from "../SceneManager";
 
@@ -69,12 +69,12 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
         fontSize: 24,
         fill: 0xffffff,
         wordWrap: true,
-        wordWrapWidth: SceneManager.instance.gameWidth / 3,
+        wordWrapWidth: SceneManager.instance.gameWidth * 0.4,
       },
     });
     this.dialogueText.anchor.set(0.5);
     this.dialogueText.position.set(
-      SceneManager.instance.gameHozCenter,
+      SceneManager.instance.gameHozCenter + (isMobile() ? 100 : 0),
       SceneManager.instance.gameVerCenter - 50,
     );
     this.dialogueText.alpha = 0.0;
@@ -165,14 +165,14 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
   }
 
   private convertTextToHTML(text: string): string {
-    return text.replace(/{([^}]+)}/g, (match, emojiName) => {
+    const defaultEmoji = PIXI.Assets.get("defaultEmoji");
+    return text.replace(/{([^}]+)}/g, (_match, emojiName) => {
       const emojiAsset = PIXI.Assets.get(emojiName);
-      console.log("Emoji asset for", emojiName, ":", emojiAsset);
       if (emojiAsset) {
         return `<img src="${emojiAsset.label}" width="32" height="32" style="margin-bottom: -5px" />`;
       }
-      // Return original text with braces if asset not found
-      return match;
+      // Return a default emoji if not found
+      return `<img src="${defaultEmoji.label}" width="32" height="32" style="margin-bottom: -5px" />`;
     });
   }
 
@@ -196,6 +196,10 @@ export class MagicWordsScene extends PIXI.Container implements IScene {
     const response = await fetch(DATA_ENDPOINT);
     this.data = await response.json();
 
+    await CustomLoader.fetchAndConvertToPNG(
+      "defaultEmoji",
+      "https://api.dicebear.com/9.x/fun-emoji/png?seed=7564",
+    );
     for (const emoji of this.data!.emojies) {
       await CustomLoader.fetchAndConvertToPNG(emoji.name, emoji.url);
     }

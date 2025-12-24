@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 import { Button } from "./Button";
 import { SceneManager, SceneName } from "../SceneManager";
+import { isMobile } from "../utils";
 
 export class SelectorMenu extends Container {
   constructor() {
@@ -9,7 +10,10 @@ export class SelectorMenu extends Container {
   }
 
   private initialize(): void {
-    this.position.set(10, SceneManager.instance.gameVerCenter - 75);
+    this.position.set(
+      10,
+      SceneManager.instance.gameVerCenter + (isMobile() ? 125 : -75),
+    );
 
     const buttons = [
       { label: "Ace of Shadows", scene: SceneName.AceOfShadows },
